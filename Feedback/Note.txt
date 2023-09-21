@@ -1,0 +1,33 @@
+http://103.234.187.197:8034/feedback/create
+ {
+	"Remark": "Test feedback",
+	"SourceType": "Order",
+	"SourceID": "10",
+	"Type": "2",
+	"Rating": "5",
+	"CardCode": "C00021",
+	"CreatedDate": "2023-05-26",
+	"CreatedTime": "11:31 AM",
+	"Attach": []
+}
+
+---------
+"Type": "2",
+[('1', 'Poor'), ('2', 'Average'), ('3', 'Good'), ('4', 'Excelent')], default="Good")
+
+---------
+"SourceType": "Order", # Delivery|Instalation
+"SourceID": "10",
+
+
+
+http://103.234.187.197:8034/feedback/update
+http://103.234.187.197:8034/feedback/one
+http://103.234.187.197:8034/feedback/all
+http://103.234.187.197:8034/feedback/all_filter
+http://103.234.187.197:8034/feedback/delete
+
+----
+
+{"CardCode":"C00021"}
+for all_filter

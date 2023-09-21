@@ -1,0 +1,58 @@
+from django.conf import settings
+sapdb = settings.SAPSESSION("api")
+sapdb['sapurl']+
+headers={'Authorization': "Bearer "+sapdb['SessionId']+""}, verify=False)
+
+
+---Industries--
+Create
+Update
+Delete
+Cron
+
+
+--Employee----
+Create
+Update
+Delete
+Cron
+
+
+-----BP Department------
+Cron
+Create
+Update
+Delete
+
+-------BP Position-----------
+Create
+Update
+Delete
+Cron
+
+---BP Branch------
+Create
+Update
+Delete --- SAP not Connected
+
+--BP Employee By Millan-----
+Create
+Update
+Delete --- SAP not connected
+
+
+----PaymentTermsTypes----
+Create
+Update
+Delete
+Cron--Pending
+
+--Invoice-----
+Cron
+
+--Category----
+Cron
+
+----Item---------
+ItemDepartment---Cron
+Tax-Cron

@@ -1,0 +1,19 @@
+{
+    "id": 0,
+    "DropDownName": "Checklist",
+    "DropDownValue": "",
+    "DropDownDescription": "",
+    "Data": [{"desc":"main title", "status":"1", "remark":"done"},{"desc":"main title", "status":"1", "remark":"done"},{"desc":"main title", "status":"1", "remark":"done"}],
+    "Parent": "",
+    "Field1": "Installation",
+    "Field2": "",
+    "Field3": "",
+    "Field4": "",
+    "Field5": "",
+    "CreatedBy": "",
+    "CreateDate": "",
+    "CreateTime": "",
+    "UpdateDate": "",
+    "UpdateTime": ""
+}
+

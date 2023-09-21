@@ -1,0 +1,10 @@
+todays work
+
+Lead:
+Attachment-Add/Edit/Delete
+Filter- From date - To Date (Done)
+N/A issue in Lead (Done)
+
+After complete forword it into preprod build 8057 4257
+
+add dynamic pagination in blair test lead and customer module (Done in Lead)

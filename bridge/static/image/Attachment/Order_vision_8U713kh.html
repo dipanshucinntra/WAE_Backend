@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>Order</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <style>
+        body {
+            margin-top: 20px;
+            background: #eee;
+        }
+        
+        * {
+            font-size: 13px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        .main-header {
+            background-color: #518DE3;
+            color: white;
+        }
+        
+        .main-header .content h4 {
+            padding-left: 10px;
+        }
+        
+        .main-header1 {
+            background-color: rgb(19, 19, 82);
+            color: white;
+            width: 100%;
+            display: flex;
+        }
+        
+        .content {
+            width: 80%;
+        }
+        
+        .bnk-dtl {
+            width: 19%;
+        }
+        
+        .second {
+            width: 100%;
+            display: flex;
+            border: 1.5px solid;
+            border-radius: 5px 5px 0 0;
+            box-sizing: border-box;
+        }
+        
+        .left {
+            width: 50%;
+        }
+        
+        .right {
+            width: 50%;
+        }
+        
+        .qr-cls {
+            width: 5%;
+            margin-left: 30px !important;
+            margin-right: 10px !important;
+        }
+        
+        .right .quotaion-heading {
+            text-align: center;
+        }
+        
+        .right-tbl {
+            margin-top: 100px;
+        }
+        
+        .ftr1 {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        #api2 tr td {
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .invoice {
+            background: #fff;
+            padding: 20px;
+            /* width: fit-content;x` */
+        }
+        
+        .invoice-company {
+            font-size: 20px
+        }
+        
+        .invoice-footer {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-size: 10px
+        }
+        
+        .invoice-note {
+            color: #999;
+            margin-top: 80px;
+            font-size: 85%
+        }
+        
+        .btn.btn-white,
+        .btn.btn-white.disabled,
+        .btn.btn-white.disabled:focus,
+        .btn.btn-white.disabled:hover,
+        .btn.btn-white[disabled],
+        .btn.btn-white[disabled]:focus,
+        .btn.btn-white[disabled]:hover {
+            color: #2d353c;
+            background: #fff;
+            border-color: #d9dfe3;
+        }
+        
+        table,
+        th,
+        td {
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        .border-0,
+        .border-0 :is(th, td) {
+            border: none;
+        }
+        
+        .box {
+            margin: 0 10%;
+        }
+        
+        .logo-img {
+            width: 185px
+        }
+        
+        .tb-heading {
+            font-weight: 600;
+        }
+        
+        .text-nowrap {
+            white-space: nowrap;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .details-customer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .details-customer>div {
+            border: 1px solid;
+            padding: 5px;
+        }
+        
+        .details-customer span {
+            font-weight: 600;
+        }
+        
+        .spliter-3 {
+            display: grid;
+            grid-template-columns: 105px 15px auto;
+            row-gap: 5px;
+        }
+        
+        .spacer-3 {
+            grid-column: 3/-1;
+        }
+        
+        .heading-b {
+            border: 1.5px solid;
+            padding: 5px;
+        }
+        
+        .table-grid-head {
+            display: grid;
+            grid-template-columns: 35px 80px 230px 80px 80px 80px 80px repeat(2, minmax(120px, 1fr));
+            grid-template-rows: auto auto;
+        }
+        
+        .font-weight-600 {
+            font-weight: 600;
+        }
+        
+        .table-grid-head .grid-head-inner {
+            grid-column: 8/-1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* grid-row: auto; */
+            padding: 0;
+        }
+        
+        .grid-head-inner>div {
+            padding: 5px;
+        }
+        
+        .grid-head-inner :not(:first-child) {
+            border-left: 1.5px solid;
+        }
+        
+        .table-grid-head>div {
+            border: 1px solid;
+            padding: 5px;
+            grid-row: 1/3;
+        }
+        
+        .spliter-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .spliter-2 :not(.text-right) {
+            font-weight: 600;
+        }
+        
+        .table-heading-b {
+            border: 1px solid;
+            padding: 5px;
+            font-weight: 600;
+        }
+        
+        .table-heading-b span {
+            margin-left: 15px;
+            font-weight: normal;
+        }
+        
+        .simple-split-3 {
+            display: grid;
+            grid-template-columns: 165px 20px auto;
+        }
+        
+        .payment-split {
+            border: 1px solid;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        
+        @media screen and (max-width: 600px) {
+            * {
+                margin: 0;
+                padding: 0;
+                font-size: 13px;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            body {
+                background-color: white;
+            }
+            .box {
+                width: 100vw;
+            }
+            .invoice-price .invoice-price-left,
+            .invoice-price .invoice-price-right {
+                padding: 0px;
+                font-size: 0px;
+            }
+            .invoice-price .invoice-price-right {
+                font-size: 5px;
+                text-align: center;
+            }
+            .box {
+                margin: 0 0%;
+            }
+            .second .left {
+                width: 45%;
+            }
+            .second .right {
+                width: 55%;
+            }
+            .right .quotaion-heading {
+                padding-left: 20px;
+            }
+            .logo-img {
+                width: 100px
+            }
+            .gst {
+                font-size: 12px;
+                margin-top: 50px !important;
+            }
+            .table-responsive {
+                overflow: scroll;
+            }
+            .ftr1 {
+                text-align: center;
+                font-weight: 600;
+            }
+            .ftr1 span {
+                font-size: 10px;
+            }
+            .right-tbl {
+                margin-left: 10px;
+                margin-top: 56px;
+            }
+            .text-right {
+                font-size: 11px;
+            }
+            .test1 {
+                font-size: 13px;
+            }
+            .content {
+                height: 30px;
+                padding-top: 10px;
+                padding-bottom: 0px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container box">
+        <div class="col-md-12">
+            <div class="invoice" style="border: 1px solid black">
+                <div class="second">
+                    <div class="left">
+                        <table class="border-0" style="width:100%; font-weight:bold;">
+                            <tr>
+                                <th colspan="3" style="padding-left:50px"> <img src="bridge-logo.png" style="width:150px" class="logo-img" alt="Bridge Logo"> </th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="right">
+                        <table style="width:100%;" class="border-0">
+                            <tr>
+                                <th id="main-building">
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td id="main-building2"> </td>
+                            </tr>
+                            <tr>
+                                <td id="main-zipCode"> ZipCode : </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    Email ID : <span id="main-email"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="main-mobilenumber">
+                                    Phone : +
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="main-pan"> PAN : </td>
+                            </tr>
+                            <tr>
+                                <td id="main-cin"> CIN : </td>
+                            </tr>
+                            <tr>
+                                <td id="main-dl-no"> DL NO : </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="details-customer">
+                    <div>
+                        <span class="heading-b-0">Details of Customer : </span>
+                        <div class="spliter-3">
+                            <div>Name</div>
+                            <div>:</div>
+                            <div class="bill-to-name"></div>
+                            <div>Address</div>
+                            <div>:</div>
+                            <div class="bill-to-address"></div>
+                            <div class="spacer-3">NEW DELHI-110048 INDIA</div>
+                            <div>State</div>
+                            <div>:</div>
+                            <div class="bill-to-state"></div>
+                            <div>State Code</div>
+                            <div>:</div>
+                            <div class="bill-to-state-code"></div>
+                            <div>Gst No.</div>
+                            <div>:</div>
+                            <div class="bill-to-gst-no"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="spliter-3">
+                            <div>SO No.</div>
+                            <div>:</div>
+                            <div id="so-no"></div>
+                            <div>SO Date</div>
+                            <div>:</div>
+                            <div id="so-date"></div>
+                            <div>Cust. Ref No</div>
+                            <div>:</div>
+                            <div id="cus-ref-no"></div>
+                            <div>Document Date</div>
+                            <div>:</div>
+                            <div id="doc-date"></div>
+                            <div>Delivery Date</div>
+                            <div>:</div>
+                            <div id="delivery-date"></div>
+                            <div>Contact Person</div>
+                            <div>:</div>
+                            <div id="contact-p"></div>
+                            <div>Phone No</div>
+                            <div>:</div>
+                            <div id="phone-no"></div>
+                            <div>Email</div>
+                            <div>:</div>
+                            <div id="so-email"></div>
+                            <div>State</div>
+                            <div>:</div>
+                            <div id="state"></div>
+                            <div>State Code</div>
+                            <div>:</div>
+                            <div id="state-code"></div>
+                            <div>Place of Supply</div>
+                            <div>:</div>
+                            <div id="place-supply"></div>
+                        </div>
+                    </div>
+                    <span class="heading-b">Details of Delivery (Bill To) : </span>
+                    <span class="heading-b">Details of Delivery (Ship To) : </span>
+                    <div>
+                        <div class="spliter-3">
+                            <div>Name</div>
+                            <div>:</div>
+                            <div id="details-to-bill"></div>
+                            <div>Address</div>
+                            <div>:</div>
+                            <div id="bill-address"></div>
+                            <div class="spacer-3" id="bill-state-zip-coun"></div>
+                            <div>State</div>
+                            <div>:</div>
+                            <div id="bill-state"></div>
+                            <div>State Code</div>
+                            <div>:</div>
+                            <div id="bill-state-code"></div>
+                            <div>Gst No.</div>
+                            <div>:</div>
+                            <div id="bill-gst"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="spliter-3">
+                            <div>Name</div>
+                            <div>:</div>
+                            <div id="details-to-ship"></div>
+                            <div>Address</div>
+                            <div>:</div>
+                            <div id="ship-address"></div>
+                            <div class="spacer-3" id="ship-state-zip-coun"></div>
+                            <div>State</div>
+                            <div>:</div>
+                            <div id="ship-state"></div>
+                            <div>State Code</div>
+                            <div>:</div>
+                            <div id="ship-state-code"></div>
+                            <div>Gst No.</div>
+                            <div>:</div>
+                            <div id="ship-gst"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-grid">
+                    <div class="table-grid-head font-weight-600">
+                        <div>Sr. No.</div>
+                        <div>Part No.</div>
+                        <div>Description of Goods/Services</div>
+                        <div class="text-center">Quantity</div>
+                        <div class="text-center">UOM</div>
+                        <div class="text-center">Rate <br />[INR]</div>
+                        <div class="text-center">Taxable Value</div>
+                        <div style="grid-row: 1/1;" class="text-center">CGST</div>
+                        <div style="grid-row: 1/1;" class="text-center">SGST</div>
+                        <div class="grid-head-inner" style="grid-row: auto;">
+                            <div>Rate %</div>
+                            <div>Amt</div>
+                            <div>Rate %</div>
+                            <div>Amt</div>
+                        </div>
+                    </div>
+                    <div id="table-body-bind">
+                    </div>
+                    <div class="table-grid-head">
+                        <div style="grid-column: 1/4;">Total</div>
+                        <div class="text-center" id="total-quatity"></div>
+                        <div class="text-center"></div>
+                        <div class="text-center"></div>
+                        <div class="text-center" id="total-taxable"></div>
+                        <div class="grid-head-inner">
+                            <div></div>
+                            <div id="total-camt"></div>
+                            <div></div>
+                            <div id="total-samt"></div>
+                        </div>
+                    </div>
+                    <div class="table-grid-head">
+                        <div style="grid-column: 1/7;"></div>
+                        <div style="grid-column: 7/-1;" class="spliter-2">
+                            <div>Total Amount Before Tax</div>
+                            <div class="text-right" id="total-amt-before"></div>
+                            <div>Add : CGST</div>
+                            <div class="text-right" id="total-cgst"></div>
+                            <div>Add : SGST</div>
+                            <div class="text-right" id="total-sgst"></div>
+                            <div>Total GST</div>
+                            <div class="text-right" id="total-gst"></div>
+                            <div>Total Amount</div>
+                            <div class="text-right" id="total-amt"></div>
+                        </div>
+                    </div>
+                    <div class="table-heading-b"> Amount In Words : <span id="totalamountword">INR </span>
+                    </div>
+                    <div class="table-heading-b"> Remarks : <span></span> </div>
+                </div>
+                <div class="spliter-2 payment-split">
+                    <div>
+                        <div class="simple-split-3">
+                            <div>Payment Terms</div>
+                            <div>:</div>
+                            <div id="payment-term"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-right">For, Vision Diagnostic India Pvt. Ltd.</p>
+                        <p class="text-right">Authorised Signatory</p>
+                    </div>
+                </div>
+                <div class="spliter-2 payment-split">
+                    <span id="prepared-by">Prepared by : </span>
+                    <span id="checked-by">Checked By & Date : </span>
+                </div>
+                <div class="spliter-2 payment-split">
+                    <span id="created-date"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var url_str = window.location.href;
+        var currentId = url_str.substring(url_str.indexOf('?id=') + 4);
+        var settings = {
+            "url": "http://103.234.187.197:8004/order/one",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({
+                "id": currentId
+            }),
+        };
+
+        $.ajax(settings).done(function(response) {
+            let data = response.data[0];
+            let totalINR = 0;
+            let PaymentTerm = "";
+            if (data.U_TermPaymentTerm == "1") {
+                PaymentTerm = "Cash Basic"
+            } else if (data.U_TermPaymentTerm == "2") {
+                PaymentTerm = "Net-30 Days"
+            } else if (data.U_TermPaymentTerm == "3") {
+                PaymentTerm = "Net- 45 Days"
+            } else if (data.U_TermPaymentTerm == "4") {
+                PaymentTerm = "Net- 60 Days"
+            } else {
+                PaymentTerm = "NA"
+            }
+            let dataPutter = [{
+                    class: false,
+                    key: "main-building",
+                    value: data.AddressExtension.ShipToBuilding
+                }, {
+                    class: false,
+                    key: "main-building2",
+                    value: data.AddressExtension.ShipToCity
+                }, {
+                    class: false,
+                    key: "main-zipCode",
+                    value: `${data.AddressExtension.U_SSTATE}-${data.AddressExtension.ShipToZipCode} ${data.AddressExtension.U_SCOUNTRY}`
+                }, {
+                    class: false,
+                    key: "main-email",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "main-mobilenumber",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "main-pan",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "main-cin",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "main-dl-no",
+                    value: "NA"
+                }, {
+                    class: true,
+                    key: "bill-to-name",
+                    value: data.ContactPersonCode[0].FirstName
+                }, {
+                    class: true,
+                    key: "bill-to-address",
+                    value: `${data.AddressExtension.BillToStreet} ${data.AddressExtension.BillToCity} ${data.AddressExtension.U_BSTATE} ${data.AddressExtension.BillToZipCode} ${data.AddressExtension.U_BCOUNTRY}`
+                }, {
+                    class: true,
+                    key: "bill-to-state",
+                    value: `${data.AddressExtension.BillToZipCode} , ${data.AddressExtension.U_BCOUNTRY}`
+                }, {
+                    class: true,
+                    key: "bill-to-state-code",
+                    value: data.AddressExtension.BillToState
+                }, {
+                    class: true,
+                    key: "bill-to-gst-no",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "so-no",
+                    value: `SO-${data.AddressExtension.OrderID}`
+                }, {
+                    class: false,
+                    key: "so-date",
+                    value: `${(data.CreateDate).split('-')[2]}/${(data.CreateDate).split('-')[1]}/${(data.CreateDate).split('-')[0]}`
+                }, {
+                    class: false,
+                    key: "cus-ref-no",
+                    value: data.ContactPersonCode[0].InternalCode
+                }, {
+                    class: false,
+                    key: "doc-date",
+                    value: `${(data.CreateDate).split('-')[2]}/${(data.CreateDate).split('-')[1]}/${(data.CreateDate).split('-')[0]}`
+                }, {
+                    class: false,
+                    key: "delivery-date",
+                    value: `${(data.DocDate).split('-')[2]}/${(data.DocDate).split('-')[1]}/${(data.DocDate).split('-')[0]}`
+                }, {
+                    class: false,
+                    key: "contact-p",
+                    value: data.ContactPersonCode[0].FirstName
+                }, {
+                    class: false,
+                    key: "phone-no",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "so-email",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "state",
+                    value: `${data.AddressExtension.U_BSTATE}`
+                }, {
+                    class: false,
+                    key: "state-code",
+                    value: `${data.AddressExtension.BillToState}`
+                }, {
+                    class: false,
+                    key: "place-supply",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "details-to-bill",
+                    value: data.AddressExtension.BillToBuilding
+                }, {
+                    class: false,
+                    key: "bill-address",
+                    value: `${data.AddressExtension.BillToCity}`
+                }, {
+                    class: false,
+                    key: "bill-state-zip-coun",
+                    value: `${data.AddressExtension.U_BSTATE}-${data.AddressExtension.BillToZipCode} ${data.AddressExtension.U_BCOUNTRY}`
+                }, {
+                    class: false,
+                    key: "bill-state",
+                    value: data.AddressExtension.U_BSTATE
+                }, {
+                    class: false,
+                    key: "bill-state-code",
+                    value: data.AddressExtension.BillToState
+                }, {
+                    class: false,
+                    key: "bill-gst",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "details-to-ship",
+                    value: data.AddressExtension.ShipToBuilding
+                }, {
+                    class: false,
+                    key: "ship-address",
+                    value: data.AddressExtension.ShipToCity
+                }, {
+                    class: false,
+                    key: "ship-state-zip-coun",
+                    value: `${data.AddressExtension.U_SSTATE}-${data.AddressExtension.ShipToZipCode} ${data.AddressExtension.U_SCOUNTRY}`
+                }, {
+                    class: false,
+                    key: "ship-state",
+                    value: data.AddressExtension.U_SSTATE
+                }, {
+                    class: false,
+                    key: "ship-state-code",
+                    value: data.AddressExtension.ShipToState
+                }, {
+                    class: false,
+                    key: "ship-gst",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "payment-term",
+                    value: PaymentTerm
+                }, {
+                    class: false,
+                    key: "prepared-by",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "checked-by",
+                    value: "NA"
+                }, {
+                    class: false,
+                    key: "created-date",
+                    value: `${(data.CreateDate).split('-')[2]}/${(data.CreateDate).split('-')[1]}/${(data.CreateDate).split('-')[0]}`
+                },
+
+            ];
+            dataInsert(dataPutter);
+            dynamicTableTdInsetor(data.DocumentLines, "table-body-bind");
+
+            function dataInsert(getObj) {
+                for (params of getObj) {
+                    if (params.class) {
+                        document.querySelectorAll(`.${params.key}`).forEach(($list) => {
+                            $list.innerText += params.value;
+                        })
+                    } else {
+                        document.getElementById(params.key).innerText += params.value;
+                    }
+                }
+            }
+
+            function dynamicTableTdInsetor(documentTableData, trID) {
+                let total = {
+                    quantity: 0,
+                    taxable: 0,
+                    camt: 0,
+                    samt: 0,
+                    total: 0
+                }
+                for (let td = 0; td < documentTableData.length; ++td) {
+                    var text = "";
+                    text += '<div class="table-grid-head">'
+                    text += '<div>' + (td + 1) + '</div>';
+                    text += '<div>' + data.DocumentLines[td].CostingCode2 + '</div>';
+                    text += '<div>' + data.DocumentLines[td].ItemDescription + ' / ' + data.DocumentLines[td].ItemCode + '</div>';
+                    text += '<div class="text-center">' + data.DocumentLines[td].Quantity + '</div>';
+                    text += '<div class="text-center">' + data.DocumentLines[td].UnitPrice + '</div>';
+                    text += '<div class="text-center">' + data.DocumentLines[td].UnitPrice + '</div>';
+                    text += '<div class="text-center">' + data.DocumentLines[td].DiscountPercent + '</div>';
+                    text += `<div class="grid-head-inner"> 
+                                <div>0</div>
+                                <div>${data.DocumentLines[td].UnitPrice}</div>
+                                <div>0</div>
+                                <div>${data.DocumentLines[td].UnitPrice}</div>
+                             </div>`;
+                    text += '</div>';
+                    total.quantity += data.DocumentLines[td].Quantity;
+                    total.taxable += data.DocumentLines[td].DiscountPercent;
+                    total.camt += data.DocumentLines[td].UnitPrice;
+                    total.total += data.DocumentLines[td].UnitPrice;
+                    document.getElementById(trID).innerHTML += text;
+                    totalINR += ((data.DocumentLines[td].Quantity * data.DocumentLines[td].UnitPrice) - ((data.DocumentLines[td].Quantity * data.DocumentLines[td].UnitPrice) * data.DocumentLines[td].DiscountPercent / 100));
+                }
+                document.getElementById('total-quatity').innerHTML += total.quantity;
+                document.getElementById('total-taxable').innerHTML += total.taxable;
+                document.getElementById('total-camt').innerHTML += total.camt;
+                //document.getElementById('total-samt').innerHTML += total.samt;
+                document.getElementById('total-samt').innerHTML += total.samt;
+
+                document.getElementById('total-amt-before').innerHTML += totalINR;
+                document.getElementById('total-cgst').innerHTML += total.samt;
+                document.getElementById('total-sgst').innerHTML += total.samt;
+                document.getElementById('total-gst').innerHTML += total.samt;
+                document.getElementById('total-amt').innerHTML += (totalINR) + (total.samt) + (total.samt);
+                // document.getElementById("totalAmountINR").innerHTML = totalINR;
+            }
+            // let gstArr = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA'];
+            // let totalArr = ['NA', 'NA', 'NA', 'NA', 'NA'];
+            // var gst = ""
+            // gst += '<tr>';
+            // tableTDCreator("gstTable", gstArr, false, gst);
+            // gst += '</tr>';
+            // tableTDCreator("totalTable", totalArr, true, null);
+            // function tableTDCreator(tdTableName, tableArr, isInnerHTML, assigner) {
+            //     tableArr.forEach(($tableArr) => {
+            //         if (isInnerHTML) {
+            //             document.getElementById(tdTableName).innerHTML += '<td>' + $tableArr + '</td>';
+            //         } else {
+            //             assigner += '<td>' + $tableArr + '</td>';
+            //         }
+            //     })
+            //     if (!isInnerHTML) {
+            //         document.getElementById(tdTableName).innerHTML += assigner
+            //     }
+            // }
+            function number2text(value) {
+                var fraction = Math.round(frac(value) * 100);
+                var f_text = "";
+                if (fraction > 0) {
+                    f_text = "AND " + convert_number(fraction) + " PAISE";
+                }
+                return convert_number(value) + " RUPEE " + f_text + " ONLY";
+            }
+
+            function frac(f) {
+                return f % 1;
+            }
+
+            function convert_number(number) {
+                if ((number < 0) || (number > 999999999)) {
+                    return "NUMBER OUT OF RANGE!";
+                }
+                var Gn = Math.floor(number / 10000000);
+                number -= Gn * 10000000;
+                var kn = Math.floor(number / 100000);
+                number -= kn * 100000;
+                var Hn = Math.floor(number / 1000);
+                number -= Hn * 1000;
+                var Dn = Math.floor(number / 100);
+                number = number % 100;
+                var tn = Math.floor(number / 10);
+                var one = Math.floor(number % 10);
+                var res = "";
+                if (Gn > 0) {
+                    res += (convert_number(Gn) + " CRORE");
+                }
+                if (kn > 0) {
+                    res += (((res == "") ? "" : " ") +
+                        convert_number(kn) + " LAKH");
+                }
+                if (Hn > 0) {
+                    res += (((res == "") ? "" : " ") +
+                        convert_number(Hn) + " THOUSAND");
+                }
+
+                if (Dn) {
+                    res += (((res == "") ? "" : " ") +
+                        convert_number(Dn) + " HUNDRED");
+                }
+
+
+                var ones = Array("", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN");
+                var tens = Array("", "", "TWENTY", "THIRTY", "FOURTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY");
+
+                if (tn > 0 || one > 0) {
+                    if (!(res == "")) {
+                        res += " AND ";
+                    }
+                    if (tn < 2) {
+                        res += ones[tn * 10 + one];
+                    } else {
+
+                        res += tens[tn];
+                        if (one > 0) {
+                            res += ("-" + ones[one]);
+                        }
+                    }
+                }
+
+                if (res == "") {
+                    res = "ZERO";
+                }
+                return res;
+            }
+            var common = data.DocTotal
+            document.getElementById("totalamountword").innerHTML += number2text(common);
+        });
+    </script>
+</body>
+
+</html>
