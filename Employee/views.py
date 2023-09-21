@@ -372,113 +372,113 @@ def dashboard(request):
 
     if "SalesEmployeeCode" in json_data:
         print("yes")
-
         if json_data['SalesEmployeeCode'] != "":
             SalesEmployeeCode = json_data['SalesEmployeeCode']
+            if Employee.objects.filter(SalesEmployeeCode=SalesEmployeeCode).exists():
+                emp_obj = Employee.objects.get(SalesEmployeeCode=SalesEmployeeCode)
+                if emp_obj.role == 'admin' or emp_obj.role == 'ceo':
+                    #emps = Employee.objects.filter(SalesEmployeeCode__gt=0)
+                    emps = Employee.objects.all()
+                    SalesEmployeeCode = []
+                    for emp in emps:
+                        SalesEmployeeCode.append(emp.SalesEmployeeCode)
+                elif emp_obj.role == 'manager':
+                    # .values('id', 'SalesEmployeeCode')
+                    emps = Employee.objects.filter(reportingTo=SalesEmployeeCode)
+                    SalesEmployeeCode = [SalesEmployeeCode]
+                    for emp in emps:
+                        SalesEmployeeCode.append(emp.SalesEmployeeCode)
+                else:
+                    SalesEmployeeCode = [SalesEmployeeCode]
+                    # emps = Employee.objects.filter(reportingTo=emp_obj.reportingTo)#.values('id', 'SalesEmployeeCode')
+                    # SalesEmployeeCode=[]
+                    # for emp in emps:
+                    # SalesEmployeeCode.append(emp.SalesEmployeeCode)
 
-            emp_obj = Employee.objects.get(SalesEmployeeCode=SalesEmployeeCode)
-            if emp_obj.role == 'admin' or emp_obj.role == 'ceo':
-                #emps = Employee.objects.filter(SalesEmployeeCode__gt=0)
-                emps = Employee.objects.all()
-                SalesEmployeeCode = []
-                for emp in emps:
-                    SalesEmployeeCode.append(emp.SalesEmployeeCode)
-            elif emp_obj.role == 'manager':
-                # .values('id', 'SalesEmployeeCode')
-                emps = Employee.objects.filter(reportingTo=SalesEmployeeCode)
-                SalesEmployeeCode = [SalesEmployeeCode]
-                for emp in emps:
-                    SalesEmployeeCode.append(emp.SalesEmployeeCode)
+                print(SalesEmployeeCode)
+
+                emp_ids = Employee.objects.filter(
+                    SalesEmployeeCode__in=SalesEmployeeCode).values_list('id', flat=True)
+                print(emp_ids)
+                #{"SalesEmployeeCode":4}
+
+                lead_all = Lead.objects.filter(assignedTo__in=emp_ids).count()
+                print(lead_all)
+                from django.db.models import Q
+
+                lead_prod = Lead.objects.filter(
+                    assignedTo__in=emp_ids).filter(~Q(intProdCat="")).count()
+                print("lead_prod")
+                print(lead_prod)
+
+                lead_proj = Lead.objects.filter(
+                    assignedTo__in=emp_ids).filter(~Q(intProjCat="")).count()
+                print("lead_proj")
+                print(lead_proj)
+
+                opp_all = Opportunity.objects.filter(
+                    SalesPerson__in=SalesEmployeeCode).count()
+                #print(opp_all)
+
+                quot_all = Quotation.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode).count()
+                #print(quot_all)
+
+                ord_all = Order.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode).count()
+                #print(ord_all)
+
+                inv_all = Invoice.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode).count()
+                #print(inv_all)
+
+                tnd_all = Tender.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode).count()
+                print(tnd_all)
+
+                #bp_all = BusinessPartner.objects.filter(SalesPersonCode__in=SalesEmployeeCode).count()
+                bp_all = BusinessPartner.objects.all().count()
+                #print(bp_all)
+
+                tgt_all = Target.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode, monthYear=yearmonth)
+
+                amount = sum(tgt_all.values_list('amount', flat=True))
+                print(amount)
+                #amount = "{:.2f}".format(amount)
+                #print(amount)
+
+                sale = sum(tgt_all.values_list('sale', flat=True))
+                print(sale)
+
+                sale_diff = sum(tgt_all.values_list('sale_diff', flat=True))
+                print(sale_diff)
+
+                notification = Notification.objects.filter(
+                    Emp=emp_obj.id, CreatedDate=tdate, Read=0).order_by("-id").count()
+                print(notification)
+
+                ord_over = Order.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Open", DocDueDate__lt=tdate).count()
+                print(ord_over)
+                print(tdate)
+
+                ord_open = Order.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Open", DocDueDate__gte=tdate).count()
+                print(ord_open)
+
+                ord_close = Order.objects.filter(
+                    SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Close").count()
+                print(ord_close)
+
+                campset_all = CampaignSet.objects.filter(
+                    CampaignSetOwner__in=SalesEmployeeCode).count()
+                print(campset_all)
+
+                #{"SalesEmployeeCode":"2"}
+                return Response({"message": "Success", "status": 200, "data": [{"notification": notification, "amount": amount, "sale": sale, "sale_diff": sale_diff, "Opportunity": opp_all, "Quotation": quot_all, "Order": ord_all, "Invoice": inv_all, "Tender": tnd_all, "Customer": bp_all, "Leads": lead_all, "Leads_Product": lead_prod, "Leads_Project": lead_proj, "Over": ord_over, "Open": ord_open, "Close": ord_close, "CampaignSet": campset_all}]})
             else:
-                SalesEmployeeCode = [SalesEmployeeCode]
-                # emps = Employee.objects.filter(reportingTo=emp_obj.reportingTo)#.values('id', 'SalesEmployeeCode')
-                # SalesEmployeeCode=[]
-                # for emp in emps:
-                # SalesEmployeeCode.append(emp.SalesEmployeeCode)
-
-            print(SalesEmployeeCode)
-
-            emp_ids = Employee.objects.filter(
-                SalesEmployeeCode__in=SalesEmployeeCode).values_list('id', flat=True)
-            print(emp_ids)
-            #{"SalesEmployeeCode":4}
-
-            lead_all = Lead.objects.filter(assignedTo__in=emp_ids).count()
-            print(lead_all)
-            from django.db.models import Q
-
-            lead_prod = Lead.objects.filter(
-                assignedTo__in=emp_ids).filter(~Q(intProdCat="")).count()
-            print("lead_prod")
-            print(lead_prod)
-
-            lead_proj = Lead.objects.filter(
-                assignedTo__in=emp_ids).filter(~Q(intProjCat="")).count()
-            print("lead_proj")
-            print(lead_proj)
-
-            opp_all = Opportunity.objects.filter(
-                SalesPerson__in=SalesEmployeeCode).count()
-            #print(opp_all)
-
-            quot_all = Quotation.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode).count()
-            #print(quot_all)
-
-            ord_all = Order.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode).count()
-            #print(ord_all)
-
-            inv_all = Invoice.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode).count()
-            #print(inv_all)
-
-            tnd_all = Tender.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode).count()
-            print(tnd_all)
-
-            #bp_all = BusinessPartner.objects.filter(SalesPersonCode__in=SalesEmployeeCode).count()
-            bp_all = BusinessPartner.objects.all().count()
-            #print(bp_all)
-
-            tgt_all = Target.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode, monthYear=yearmonth)
-
-            amount = sum(tgt_all.values_list('amount', flat=True))
-            print(amount)
-            #amount = "{:.2f}".format(amount)
-            #print(amount)
-
-            sale = sum(tgt_all.values_list('sale', flat=True))
-            print(sale)
-
-            sale_diff = sum(tgt_all.values_list('sale_diff', flat=True))
-            print(sale_diff)
-
-            notification = Notification.objects.filter(
-                Emp=emp_obj.id, CreatedDate=tdate, Read=0).order_by("-id").count()
-            print(notification)
-
-            ord_over = Order.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Open", DocDueDate__lt=tdate).count()
-            print(ord_over)
-            print(tdate)
-
-            ord_open = Order.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Open", DocDueDate__gte=tdate).count()
-            print(ord_open)
-
-            ord_close = Order.objects.filter(
-                SalesPersonCode__in=SalesEmployeeCode, DocumentStatus="bost_Close").count()
-            print(ord_close)
-
-            campset_all = CampaignSet.objects.filter(
-                CampaignSetOwner__in=SalesEmployeeCode).count()
-            print(campset_all)
-
-            #{"SalesEmployeeCode":"2"}
-            return Response({"message": "Success", "status": 200, "data": [{"notification": notification, "amount": amount, "sale": sale, "sale_diff": sale_diff, "Opportunity": opp_all, "Quotation": quot_all, "Order": ord_all, "Invoice": inv_all, "Tender": tnd_all, "Customer": bp_all, "Leads": lead_all, "Leads_Product": lead_prod, "Leads_Project": lead_proj, "Over": ord_over, "Open": ord_open, "Close": ord_close, "CampaignSet": campset_all}]})
-
+                return Response({"message": "Unsuccess", "status": 201, "data": [{"error": "Not Found"}]})
             #return Response({"message": "Success","status": 201,"data":[{"emp":SalesEmployeeCode}]})
         else:
             return Response({"message": "Unsuccess", "status": 201, "data": [{"error": "SalesEmployeeCode?"}]})
@@ -1939,3 +1939,30 @@ def ser(arr):
     y = arr[:3]
     z = x+y"""
     return arr[3:] + arr[:3]
+
+
+def GetTeam(SalesPersonID, Team):
+	Admins = ["Admin", "Managing Director", "General Manager", "admin"]
+	subdep = GetSubdep(Team)
+	emp_obj =  Employee.objects.get(SalesEmployeeCode=SalesPersonID)
+	print("emp_obj.role.Name :", emp_obj.role)			
+	if emp_obj.role in "Sales Manager" or emp_obj.role in "Line Manager" or emp_obj.role in "Supervisor":
+		emps = Employee.objects.filter(reportingTo=SalesPersonID, subdep=subdep).values('id', 'SalesEmployeeCode')
+		SalesPersonID=[SalesPersonID]
+		for emp in emps:
+			SalesPersonID.append(emp['SalesEmployeeCode'])
+
+	elif emp_obj.role in "Branch Manager":
+		emps = Employee.objects.filter(branch=emp_obj.branch, subdep=subdep).values('id', 'SalesEmployeeCode')
+		SalesPersonID=[SalesPersonID]
+		for emp in emps:
+			SalesPersonID.append(emp['SalesEmployeeCode'])
+		
+	elif emp_obj.role in Admins:
+		emps = Employee.objects.filter(SalesEmployeeCode__gt=0, subdep=subdep).values('id', 'SalesEmployeeCode')
+		SalesPersonID=[]
+		for emp in emps:
+			SalesPersonID.append(emp['SalesEmployeeCode'])
+	else:
+		SalesPersonID = [SalesPersonID]	
+	return SalesPersonID   

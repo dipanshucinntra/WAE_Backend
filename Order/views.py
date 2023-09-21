@@ -1352,68 +1352,69 @@ def all_filter_page(request):
         
         if json_data['SalesPersonCode']!="":
             SalesPersonID = json_data['SalesPersonCode']
-            
-            emp_obj = Employee.objects.get(SalesEmployeeCode=SalesPersonID)
-            
-            if emp_obj.role == 'manager':
-                emps = Employee.objects.filter(reportingTo=SalesPersonID)#.values('id', 'SalesEmployeeCode')
-                SalesPersonID=[SalesPersonID]
-                for emp in emps:
-                    SalesPersonID.append(emp.SalesEmployeeCode)
+            if Employee.objects.filter(SalesEmployeeCode=SalesPersonID).exists():
+                emp_obj = Employee.objects.get(SalesEmployeeCode=SalesPersonID)
                 
-            elif emp_obj.role == 'admin' or emp_obj.role == 'ceo':
-                emps = Employee.objects.filter(SalesEmployeeCode__gt=0)
-                SalesPersonID=[]
-                for emp in emps:
-                    SalesPersonID.append(emp.SalesEmployeeCode)
-            else:
-                SalesPersonID = [json_data['SalesPersonCode']]
-            
-            print(SalesPersonID)
-            
-            for ke in json_data.keys():
-                if ke =='U_FAV' :
-                    print("yes filter")
-                    if json_data['U_FAV'] !='':
-                        quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, U_FAV=json_data['U_FAV']).order_by("-id")
-                        if len(quot_obj) ==0:
-                            return Response({"message": "Not Available","status": 201,"data":[]})
-                        else:
-                            allqt = OrderShow(quot_obj)
-                            return Response({"message": "Success","status": 200,"data":allqt})
-                # elif ke =='U_TYPE' :
-                    # if json_data['U_TYPE'] !='':
-                        # quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, U_TYPE=json_data['U_TYPE']).order_by("-id")
-                        # if len(quot_obj) ==0:
-                            # return Response({"message": "Not Available","status": 201,"data":[]})
-                        # else:
-                            # quot_json = OrderSerializer(quot_obj, many=True)
-                            # return Response({"message": "Success","status": 200,"data":quot_json.data})
-                # elif ke =='Status' :
-                    # if json_data['Status'] !='':
-                        # quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, Status=json_data['Status']).order_by("-id")
-                        # if len(quot_obj) ==0:
-                            # return Response({"message": "Not Available","status": 201,"data":[]})
-                        # else:
-                            # quot_json = OrderSerializer(quot_obj, many=True)
-                            # return Response({"message": "Success","status": 200,"data":quot_json.data})
-                
+                if emp_obj.role == 'manager':
+                    emps = Employee.objects.filter(reportingTo=SalesPersonID)#.values('id', 'SalesEmployeeCode')
+                    SalesPersonID=[SalesPersonID]
+                    for emp in emps:
+                        SalesPersonID.append(emp.SalesEmployeeCode)
+                    
+                elif emp_obj.role == 'admin' or emp_obj.role == 'ceo':
+                    emps = Employee.objects.filter(SalesEmployeeCode__gt=0)
+                    SalesPersonID=[]
+                    for emp in emps:
+                        SalesPersonID.append(emp.SalesEmployeeCode)
                 else:
-                    print("no filter")
-                    # qt = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
-                    # quot_json = OrderSerializer(quot_obj, many=True)
-                    # return Response({"message": "Success","status": 200,"data":quot_json.data})
-                    if MaxItem!="All":
-                        quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
-                        total_count = quot_obj.count()
-                        quot_obj = quot_obj[startWith:endWith]
+                    SalesPersonID = [json_data['SalesPersonCode']]
+                
+                print(SalesPersonID)
+                
+                for ke in json_data.keys():
+                    if ke =='U_FAV' :
+                        print("yes filter")
+                        if json_data['U_FAV'] !='':
+                            quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, U_FAV=json_data['U_FAV']).order_by("-id")
+                            if len(quot_obj) ==0:
+                                return Response({"message": "Not Available","status": 201,"data":[]})
+                            else:
+                                allqt = OrderShow(quot_obj)
+                                return Response({"message": "Success","status": 200,"data":allqt})
+                    # elif ke =='U_TYPE' :
+                        # if json_data['U_TYPE'] !='':
+                            # quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, U_TYPE=json_data['U_TYPE']).order_by("-id")
+                            # if len(quot_obj) ==0:
+                                # return Response({"message": "Not Available","status": 201,"data":[]})
+                            # else:
+                                # quot_json = OrderSerializer(quot_obj, many=True)
+                                # return Response({"message": "Success","status": 200,"data":quot_json.data})
+                    # elif ke =='Status' :
+                        # if json_data['Status'] !='':
+                            # quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID, Status=json_data['Status']).order_by("-id")
+                            # if len(quot_obj) ==0:
+                                # return Response({"message": "Not Available","status": 201,"data":[]})
+                            # else:
+                                # quot_json = OrderSerializer(quot_obj, many=True)
+                                # return Response({"message": "Success","status": 200,"data":quot_json.data})
+                    
                     else:
-                        quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
-                        total_count = quot_obj.count()
-                    allqt = OrderShowPage(quot_obj)
-                        
-                    return Response({"message": "Success","status": 200,"data":allqt, "extra":{"total_count":total_count}})
-            
+                        print("no filter")
+                        # qt = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
+                        # quot_json = OrderSerializer(quot_obj, many=True)
+                        # return Response({"message": "Success","status": 200,"data":quot_json.data})
+                        if MaxItem!="All":
+                            quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
+                            total_count = quot_obj.count()
+                            quot_obj = quot_obj[startWith:endWith]
+                        else:
+                            quot_obj = Order.objects.filter(SalesPersonCode__in=SalesPersonID).order_by("-id")
+                            total_count = quot_obj.count()
+                        allqt = OrderShowPage(quot_obj)
+                            
+                        return Response({"message": "Success","status": 200,"data":allqt, "extra":{"total_count":total_count}})
+            else:
+                return Response({"message": "Unsuccess","status": 201,"data":[{"error":"Not Found"}]})
         else:
             return Response({"message": "Unsuccess","status": 201,"data":[{"error":"SalesPersonCode?"}]})
     else:
