@@ -1940,7 +1940,6 @@ def ser(arr):
     z = x+y"""
     return arr[3:] + arr[:3]
 
-
 def GetTeam(SalesPersonID, Team):
 	Admins = ["Admin", "Managing Director", "General Manager", "admin"]
 	subdep = GetSubdep(Team)

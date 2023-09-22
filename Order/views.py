@@ -796,7 +796,7 @@ def orderamendment_update(request):
                 modelhistory_data += 1
             except:
                 modelhistory_data = 1
-            modelHistory = OrderHistory(Number=modelhistory_data, OrderID=fetchid, NetTotal=request.data['NetTotal'], CreatedDate=request.data['CreateDate'], CreatedTime=request.data['CreateTime'])
+            modelHistory = OrderHistory(Number=modelhistory_data, OrderID=fetchid, NetTotal=request.data['NetTotal'], CreatedDate=request.data['CreateDate'], CreatedTime=request.data['CreateTime'], Comments=request.data['Comments'])
             modelHistory.save()
             
             print('lines', request.data['DocumentLines'])
@@ -952,7 +952,7 @@ def update(request):
         # print(settings.BASEURL+"/Orders('"+model.DocEntry+"')");
         # res = requests.patch(settings.BASEURL+"/Orders("+model.DocEntry+")", data=json.dumps(qt_data), cookies=r.cookies, verify=False)
 
-        print(settings.BASEURL+"/Orders('"+model.DocEntry+"')");
+        print(settings.BASEURL+"/Orders('"+model.DocEntry+"')")
         res = requests.patch(settings.BASEURL+"/Orders("+model.DocEntry+")", data=json.dumps(qt_data), cookies=r.cookies, verify=False)
         print(res.content)
 

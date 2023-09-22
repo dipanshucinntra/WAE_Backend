@@ -286,6 +286,7 @@ class OrderHistory(models.Model):
     NetTotal = models.CharField(max_length=50, blank=True)
     CreatedDate = models.CharField(max_length=30, blank=True)
     CreatedTime = models.CharField(max_length=30, blank=True)
+    Comments = models.TextField(blank=True)
 
 class DocumentLinesHistory(models.Model):
     orderhistory_id = models.ForeignKey(OrderHistory, on_delete=models.CASCADE, null=True, blank=True)
