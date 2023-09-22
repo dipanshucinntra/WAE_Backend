@@ -37,19 +37,20 @@ def create(request):
     close_date = request.data["close_date"]
     created_by = request.data["created_by"]
     machine_sp_type= request.data['machine_sp_type']
-    amd = Amendment(order_id=order_id,ops_revision=ops_revision,client_name=client_name,ops_number=ops_number,amendment=amendment,reason=reason,open_date=open_date,close_date=close_date,created_by=created_by, machine_sp_type=machine_sp_type)
-    amd.save()
-    
-    order_obj = Order.objects.filter(id=order_id).first()
-    emp_objj = Employee.objects.filter(SalesEmployeeCode=order_obj.SalesPersonCode).first()
-    send_notify = Notification(Title="Amendment created", Description="Click To Check", Type="Action", Read="0", SourceType="Amendment", SourceID=amd.id, Emp=emp_objj.reportingTo, SourceTime=time, CreatedDate=date, CreatedTime=time)    
-    send_notify.save()
+    if Amendment.objects.filter(Q(order_id=order_id), ~Q(approval_status="Closed")).exists():
+        return Response({"message":f"One Amendment Request For Order ID {order_id} Is Already Under Process.","status":"201","data":[]})
+    else:        
+        amd = Amendment(order_id=order_id,ops_revision=ops_revision,client_name=client_name,ops_number=ops_number,amendment=amendment,reason=reason,open_date=open_date,close_date=close_date,created_by=created_by, machine_sp_type=machine_sp_type)
+        amd.save()        
+        order_obj = Order.objects.filter(id=order_id).first()
+        emp_objj = Employee.objects.filter(SalesEmployeeCode=order_obj.SalesPersonCode).first()
+        send_notify = Notification(Title="Amendment created", Description="Click To Check", Type="Action", Read="0", SourceType="Amendment", SourceID=amd.id, Emp=emp_objj.reportingTo, SourceTime=time, CreatedDate=date, CreatedTime=time)    
+        send_notify.save()
 
-    apprvl_emp = Employee.objects.filter(role="ceo").first()
-    send_notify = Notification(Title="Amendment created", Description="Click To Check", Type="Action", Read="0", SourceType="Amendment", SourceID=amd.id, Emp=apprvl_emp.SalesEmployeeCode, SourceTime=time, CreatedDate=date, CreatedTime=time)    
-    send_notify.save()
-
-    return Response({"message":"successful","status":"200","data":[]})
+        apprvl_emp = Employee.objects.filter(role="ceo").first()
+        send_notify = Notification(Title="Amendment created", Description="Click To Check", Type="Action", Read="0", SourceType="Amendment", SourceID=amd.id, Emp=apprvl_emp.SalesEmployeeCode, SourceTime=time, CreatedDate=date, CreatedTime=time)    
+        send_notify.save()
+        return Response({"message":"successful","status":"200","data":[]})
 
 
 @api_view(['POST'])
